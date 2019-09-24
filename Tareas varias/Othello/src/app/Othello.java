@@ -1,3 +1,17 @@
+/*
+ * #### requires ps-version 3.0 ####
+ * <#
+ *    Version:        0.1
+ *    Author:         Camilo Nieto
+ *    Creation Date:  Thursday, September 19th 2019, 12:49:07 pm
+ *    File: AgentProgramm.java
+ *    Copyright (c) 2019 Your Company
+ * 
+ * .LICENSE
+ * Free software created by Camilo Esteban Nieto Barrera
+ *  
+ */
+
 package app;
 
 import java.util.ArrayList;
@@ -8,19 +22,23 @@ public class Othello {
     private Byte[][] initial_board;
     private Integer rows;
     private Integer cols;
-    private Boolean maximizing_player = true;
+    private Boolean player = true;
     private Integer total_tokens;
-    private Integer actual_tokens = 4;
 
+    /**
+     * 
+     * @param rows
+     * @param cols
+     */
     public Othello( Integer rows, Integer cols ){
         this.rows = rows;
         this.cols = cols;
         this.initial_board = new Byte[rows][cols];
         this.total_tokens = rows*cols;
         initBoard();
-        printBoard(initial_board);
     }
 
+    /** */
     private void initBoard(){
         int middle_rows = this.rows/2;
         int middle_cols = this.cols/2;
@@ -31,62 +49,84 @@ public class Othello {
         this.initial_board[middle_rows][middle_cols] = 0;
     }
 
-    public ArrayList<Byte[][]> getChilds( Byte[][] board ){
-        return getChilds( board, true );
-    }
-
-    public void setMaximizingPlayer( Boolean maximizing_player){
-        this.maximizing_player = maximizing_player;
-    }
-
-    public Boolean getMaximizingPlayer(){
-        return this.maximizing_player;
-    }
-
-    public ArrayList<Byte[][]> getChilds( Byte[][] board, Boolean maximizing_player ){
+    /**
+     * 
+     * @param board
+     * @param player
+     * @return
+     */
+    public ArrayList<Byte[][]> getChilds( Byte[][] board, Boolean player ){
         ArrayList<Byte[][]> childs = new ArrayList<>();
         for( int i=0; i<this.rows; i++ ){
             for( int j=0; j<this.cols; j++ ){
 
                 if( board[i][j] == null )continue;
-                if( i > 0 && j > 0 && board[i-1][j-1] == null ) childs.add( addChild( copy( board ), i-1, j-1, maximizing_player ) );
-                if( i > 0 && j < cols-1 && board[i-1][j+1] == null ) childs.add( addChild( copy( board ), i-1, j+1, maximizing_player ) );
-                if( i < rows-1 && j > 0 && board[i+1][j-1] == null ) childs.add( addChild( copy( board ), i+1, j-1, maximizing_player ) );
-                if( i < rows-1 && j < cols-1 && board[i+1][j+1] == null ) childs.add( addChild( copy( board ), i+1, j+1, maximizing_player ) );
-                if( i > 0 && board[i-1][j] == null ) childs.add( addChild( copy( board ), i-1, j, maximizing_player ) );
-                if( i < rows-1 && board[i+1][j] == null ) childs.add( addChild( copy( board ), i+1, j, maximizing_player ) );
-                if( j > 0 && board[i][j-1] == null ) childs.add( addChild( copy( board ), i, j-1, maximizing_player ) );
-                if( j < cols-1 && board[i][j+1] == null ) childs.add( addChild( copy( board ), i, j+1, maximizing_player ) );
+                if( i > 0 && j > 0 && board[i-1][j-1] == null ) childs.add( addChild( copy( board ), i-1, j-1 ) );
+                if( i > 0 && j < cols-1 && board[i-1][j+1] == null ) childs.add( addChild( copy( board ), i-1, j+1 ) );
+                if( i < rows-1 && j > 0 && board[i+1][j-1] == null ) childs.add( addChild( copy( board ), i+1, j-1 ) );
+                if( i < rows-1 && j < cols-1 && board[i+1][j+1] == null ) childs.add( addChild( copy( board ), i+1, j+1 ) );
+                if( i > 0 && board[i-1][j] == null ) childs.add( addChild( copy( board ), i-1, j ) );
+                if( i < rows-1 && board[i+1][j] == null ) childs.add( addChild( copy( board ), i+1, j ) );
+                if( j > 0 && board[i][j-1] == null ) childs.add( addChild( copy( board ), i, j-1 ) );
+                if( j < cols-1 && board[i][j+1] == null ) childs.add( addChild( copy( board ), i, j+1 ) );
             }
         }
         return childs;
     }
 
-    private Byte[][] addChild( Byte[][] board, int i, int j, Boolean maximizing_player ){
+    /**
+     * 
+     * @param board
+     * @param i
+     * @param j
+     * @return
+     */
+    private Byte[][] addChild( Byte[][] board, int i, int j ){
 
-        if( this.maximizing_player ) board[i][j] = 0;
+        if( this.player ) board[i][j] = 0;
         else board[i][j] = 1;
 
-        board = changeTokens(board, i, j, -1, -1, this.maximizing_player);
-        board = changeTokens(board, i, j, -1, 0, this.maximizing_player);
-        board = changeTokens(board, i, j, -1, 1, this.maximizing_player);
-        board = changeTokens(board, i, j, 0, -1, this.maximizing_player);
-        board = changeTokens(board, i, j, 0, 1, this.maximizing_player);
-        board = changeTokens(board, i, j, 1, -1, this.maximizing_player);
-        board = changeTokens(board, i, j, 1, 0, this.maximizing_player);
-        board = changeTokens(board, i, j, 1, 1, this.maximizing_player);
+        board = changeTokens(board, i, j, -1, -1);
+        board = changeTokens(board, i, j, -1, 0);
+        board = changeTokens(board, i, j, -1, 1);
+        board = changeTokens(board, i, j, 0, -1);
+        board = changeTokens(board, i, j, 0, 1);
+        board = changeTokens(board, i, j, 1, -1);
+        board = changeTokens(board, i, j, 1, 0);
+        board = changeTokens(board, i, j, 1, 1);
 
         return board;
     }
 
-    private Byte[][] changeTokens( Byte[][] board, int i, int j, int _i, int _j, Boolean maximizing_player ){
-        return changeTokens(board, null, i+_i, j+_j, _i, _j, maximizing_player, false, false);
+    /**
+     * 
+     * @param board
+     * @param i
+     * @param j
+     * @param _i
+     * @param _j
+     * @return
+     */
+    private Byte[][] changeTokens( Byte[][] board, int i, int j, int _i, int _j ){
+        return changeTokens(board, null, i+_i, j+_j, _i, _j, false, false);
     }
 
+    /**
+     * 
+     * @param board
+     * @param aux_board
+     * @param i
+     * @param j
+     * @param _i
+     * @param _j
+     * @param created
+     * @param change
+     * @return
+     */
     private Byte[][] changeTokens( 
                     Byte[][] board, Byte[][] aux_board, 
-                    int i, int j, int _i, int _j, 
-                    Boolean maximizing_player, Boolean created, Boolean change ){
+                    int i, int j, int _i, int _j,
+                    Boolean created, Boolean change ){
 
         if( i < 0 || j < 0 || i >= this.rows || j >= this.cols || board[i][j] == null )
             return board;
@@ -94,39 +134,21 @@ public class Othello {
             aux_board = copy(board);
             created = true;
         }
-        if( maximizing_player && board[i][j] == 0 || !maximizing_player && board[i][j] == 1 )
+        if( this.player && board[i][j] == 0 || !this.player && board[i][j] == 1 )
             if( change ) return aux_board;
             else return board;
 
-        if( maximizing_player ) aux_board[i][j] = 0;
+        if( this.player ) aux_board[i][j] = 0;
         else aux_board[i][j] = 1;
         change = true;
-        return changeTokens(board, aux_board, i+_i, j+_j, _i, _j, maximizing_player, created, change);
+        return changeTokens(board, aux_board, i+_i, j+_j, _i, _j, created, change);
     }
 
-    /* private Byte[][] changeTokens( Byte[][] board, int i, int j, int _i, int _j, Boolean maximizing_player ){
-        if( board[i+_i][j+_j] == null ) return board;
-
-        Byte[][] aux_board = copy(board);
-
-        while( i+_i > 0 && j+_j > 0 && i+_i < this.rows-1 && j+_j < this.cols-1 && aux_board[i+_i][j+_j] != null ){
-            if( maximizing_player ){
-                if( board[i+_i][j+_j] == 1 )
-                    aux_board[i+_i][j+_j] = 0;
-                else
-                    return aux_board;
-            } else{
-                if( board[i+_i][j+_j] == 0 )
-                    aux_board[i+_i][j+_j] = 1;
-                else
-                    return aux_board;
-            }
-            _i += _i;
-            _j += _j;
-        }
-        return board;
-    } */
-
+    /**
+     * 
+     * @param board
+     * @return
+     */
     private Byte[][] copy( Byte[][] board ){
         Byte[][] aux = new Byte[this.rows][this.cols];
         for (int i = 0; i < this.rows; i++) 
@@ -134,6 +156,11 @@ public class Othello {
         return aux;
     }
 
+    /**
+     * 
+     * @param board
+     * @return
+     */
     public Boolean isFinished( Byte[][] board ){
         for (int i = 0; i < this.rows; i++) 
             for (int j = 0; j < this.cols; j++) 
@@ -143,6 +170,11 @@ public class Othello {
                 
     }
 
+    /**
+     * 
+     * @param board
+     * @return
+     */
     public Integer winner( Byte[][] board ){
         Integer ceros = 0;
         for( int i=0; i<this.rows; i++ )
@@ -152,61 +184,77 @@ public class Othello {
         return ceros > this.total_tokens/2 ? 0 : 1;
     }
 
-    public Boolean isTurn() {
-        return this.maximizing_player;
-    }
-
+    /**
+     * 
+     * @return
+     */
     public Boolean getTurn() {
-        return this.maximizing_player;
+        return this.player;
     }
 
-    public void setTurn(Boolean maximizing_player) {
-        this.maximizing_player = maximizing_player;
+    /**
+     * 
+     * @param player
+     */
+    public void setTurn(Boolean player) {
+        this.player = player;
     }
 
-    public Othello maximizing_player(Boolean maximizing_player) {
-        this.maximizing_player = maximizing_player;
-        return this;
-    }
-
-
+    /**
+     * 
+     * @return
+     */
     public Byte[][] getInitialBoard() {
         return this.initial_board;
     }
 
-    public void setInitialBoard(Byte[][] board) {
-        this.initial_board = board;
-    }
-
+    /**
+     * 
+     * @return
+     */
     public Integer getRows() {
         return this.rows;
     }
 
+    /**
+     * 
+     * @param rows
+     */
     public void setRows(Integer rows) {
         this.rows = rows;
     }
 
+    /**
+     * 
+     * @return
+     */
     public Integer getCols() {
         return this.cols;
     }
 
-    public void setCols(Integer cols) {
-        this.cols = cols;
+    /**
+     * 
+     * @param board
+     * @return
+     */
+    public ArrayList<Byte[][]> getChilds( Byte[][] board ){
+        return getChilds( board, true );
     }
 
-    public Othello initial_board(Byte[][] board) {
-        this.initial_board = board;
-        return this;
+    /**
+     * 
+     * @param player
+     */
+    public void setPlayer( Boolean player){
+        this.player = player;
     }
 
-    public Othello rows(Integer rows) {
-        this.rows = rows;
-        return this;
-    }
-
-    public Othello cols(Integer cols) {
-        this.cols = cols;
-        return this;
+    /**
+     * 
+     * @return
+     */
+    public Boolean getPlayer(){
+        return this.player;
     }
 
     @Override
@@ -234,7 +282,10 @@ public class Othello {
             "}";
     }
 
-
+    /**
+     * 
+     * @param board
+     */
     public void printBoard( Byte[][] board ){
         for( int i=0; i<this.cols; i++ )
             System.out.print("-");

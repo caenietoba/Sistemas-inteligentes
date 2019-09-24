@@ -1,0 +1,49 @@
+{
+    "powershell.powerShellExePath": "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "files.defaultLanguage": "powershell",
+  "psi-header.config": {
+    "forceToTop": true,
+    "blankLinesAfter": 4,
+    "license": "Custom"
+  },
+  
+  "psi-header.license-text": [
+    "Free software created by Camilo Esteban Nieto Barrera"
+],
+  "psi-header.variables": [
+    ["author", "Camilo Nieto"],
+    ["authoremail", "caenietoba@unal.edu.co"],
+    ["initials", "CENB"]
+  ],
+  "psi-header.lang-config": [
+    {
+      "language": "powershell",
+      "begin": "<#",
+      "end": "#>",
+      "prefix": "",
+        }
+  ],
+  "psi-header.templates": [
+    {
+      "language": "*",
+      "template": [
+        "#### requires ps-version 3.0 ####",
+        "<#",
+          "   Version:        0.1",
+          "   Author:         <<author>>",
+          "   Creation Date:  <<filecreated('dddd, MMMM Do YYYY, h:mm:ss a')>>",
+          "   File: <<filename>>",
+            "   Copyright (c) <<year>> <<company>>",
+        "",
+        ".LICENSE",
+          "<<licensetext>>",
+        " ", 
+    ],
+      "changeLogCaption": "HISTORY:",
+      "changeLogHeaderLineCount": 2,
+      "changeLogEntryTemplate": [
+        "<<dateformat('YYYY-MM-DD-hh-mm-a')>>\t <<initials>>\t"
+      ]
+    },
+  ]
+}
