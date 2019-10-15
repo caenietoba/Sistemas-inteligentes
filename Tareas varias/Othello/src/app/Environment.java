@@ -19,7 +19,9 @@ public class Environment{
 
     private Othello othello;
 
-    /** */
+    /**
+     * The environment principal function
+     */
     public void run(){
         Scanner sc = new Scanner(System.in);
         
@@ -45,9 +47,9 @@ public class Environment{
     }
 
     /**
-     * 
-     * @param board
-     * @return
+     * Looks if the game is over 
+     * @param board Board that will be analized to see if the game is over
+     * @return Return true if game is over, otherwise return false
      */
     private Boolean finish( Byte[][] board ){
         if( !othello.isFinished( board ) )
@@ -56,8 +58,8 @@ public class Environment{
     }
 
     /**
-     * 
-     * @param winner
+     * Print the winner player
+     * @param winner Integer that represents the player
      */
     private void printWinner( Integer winner ){
         System.out.println( "The winner is player: " + winner );
