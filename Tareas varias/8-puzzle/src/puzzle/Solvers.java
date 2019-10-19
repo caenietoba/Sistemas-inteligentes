@@ -145,7 +145,7 @@ public class Solvers {
      * @return
      */
     private Integer heuristicA( Byte[] array ){
-        Integer f = 1;
+        Integer f = 1; //Costo inicial del paso
         for (int i = 0; i < 9; i++) 
             if( array[i] != 0 && array[i] != Puzzle.goal_puzzle[i] )
                 f++;
@@ -158,7 +158,7 @@ public class Solvers {
      * @return
      */
     private Integer heuristicB( Byte[] array ){
-        Integer f = 1;
+        Integer f = 1; //Costo inicial del paso
         for (int i = 0; i < 9; i++) {
             if( array[i] != 0 ){
                 f += Math.abs( ((array[i]-1) % 3) - (i % 3) );

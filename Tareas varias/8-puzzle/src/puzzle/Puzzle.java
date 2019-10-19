@@ -8,7 +8,7 @@ public class Puzzle implements Comparable<Puzzle> {
     private Byte[] puzzle;
     private int priority;
 
-    public static final Byte[] goal_puzzle = {
+    public static Byte[] goal_puzzle = {
         1,2,3,
         4,5,6,
         7,8,0

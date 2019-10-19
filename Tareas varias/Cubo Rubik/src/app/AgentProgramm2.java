@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Random;
 import java.util.Stack;
@@ -115,20 +116,19 @@ class AgentProgramm2 {
                 if( memory2.contains(get3Matrix(aux_cube))) continue;
                 
                 queue.add( new Actions(actions.getList(), child) );
-                //memory2.add( get3Matrix(aux_cube) );
+                memory2.add( get3Matrix(aux_cube) );
                 /* if(rd.nextInt(200) % 5 == 0)
                     memory.add( aux_cube ); */
             }
         }
         printSolution(actions);
     }
+    
 
     /* private void aStarSearch(){
         PriorityQueue<Cube> queue =  new PriorityQueue<>();
-        map = new HashMap<>();
-        HashMap<Cube, Boolean> map2 = new HashMap<>();
-        List<List<List<Byte>>> list_goal_cube = Cube.arrayToList( goal_cube );
-        Cube[] childs;
+        // map = new HashSet<>();
+        HashSet<Cube> map2 = new HashSet<>();
         
         cube.setPriority( heuristic.heuristicA(cube, goal_cube) );
         queue.add(cube);
@@ -138,7 +138,6 @@ class AgentProgramm2 {
             cube = queue.poll();
             // System.out.println(cube);
             if( cube.finished( list_goal_cube ) ) break;
-            childs = cube.getChilds();
             for (Cube child : childs) {
                 child.setPriority( heuristic.heuristicA(child, goal_cube) );
                 if( map2.containsKey( child ) ) {
@@ -150,7 +149,7 @@ class AgentProgramm2 {
             }
         }
         cube.printCube();
-    } */
+    }  */
 
     private void printSolution(Actions actions) {
         System.out.println("\nThe messy cube is:\n");

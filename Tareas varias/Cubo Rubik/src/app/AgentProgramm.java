@@ -111,7 +111,7 @@ class AgentProgramm{
         cube.printCube();
     }
 
-    private void aStarSearch( Cube cube ){
+    /* private void aStarSearch( Cube cube ){
         PriorityQueue<Cube> queue =  new PriorityQueue<>();
         map = new HashMap<>();
         HashMap<Cube, Boolean> map2 = new HashMap<>();
@@ -138,7 +138,7 @@ class AgentProgramm{
             }
         }
         cube.printCube();
-    }
+    } */
 
     /* protected void doAction(){
         Cube cube = new Cube( goal_cube );

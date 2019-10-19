@@ -17,7 +17,6 @@ class Environment2 {
         try {
             agent.solveCube();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
