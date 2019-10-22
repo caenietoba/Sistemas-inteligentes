@@ -140,7 +140,7 @@ public class Solvers {
     }
 
     /**
-     * 
+     *  Descolocadas
      * @param array
      * @return
      */
@@ -153,7 +153,7 @@ public class Solvers {
     }
 
     /**
-     * 
+     * Distancia Manhattan
      * @param array
      * @return
      */
