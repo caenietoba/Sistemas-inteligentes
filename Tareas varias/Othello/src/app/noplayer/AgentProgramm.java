@@ -12,7 +12,7 @@
  *  
  */
 
-package app;
+package app.noplayer;
 
 import java.util.ArrayList;
 
@@ -21,8 +21,8 @@ import java.util.PriorityQueue;
 public class AgentProgramm{
 
     private PriorityQueue<Board> p_queue = new PriorityQueue<>();
-    Othello othello;
-    Heuristics heuristics;
+    private Othello othello;
+    private Heuristics heuristics;
 
     /**
      * 
@@ -85,7 +85,5 @@ public class AgentProgramm{
             return value;
         }
     }
-
-    
 
 }

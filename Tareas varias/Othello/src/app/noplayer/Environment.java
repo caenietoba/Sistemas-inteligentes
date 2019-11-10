@@ -11,7 +11,7 @@
  * Free software created by Camilo Esteban Nieto Barrera
  *  
  */
-package app;
+package app.noplayer;
 
 import java.util.Scanner;
 

@@ -14,9 +14,15 @@
 
 package app;
 
+/**
+ * In case you want two agents to play each other use app.noplayer.Environment
+ * In case you want that your agent play against another player use app.multiplayer.Environment
+ */
+import app.multiplayer.Environment;
+
 public class App {
     public static void main(String[] args) throws Exception {
         Environment e = new Environment();
-        e.run();
+        e.init();
     }
 }

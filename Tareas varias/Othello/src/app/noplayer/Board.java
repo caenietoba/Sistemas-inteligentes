@@ -12,7 +12,7 @@
  *  
  */
 
-package app;
+package app.noplayer;
 
 import java.util.Random;
 

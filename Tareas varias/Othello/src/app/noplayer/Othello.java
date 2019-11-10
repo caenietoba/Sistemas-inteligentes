@@ -12,12 +12,12 @@
  *  
  */
 
-package app;
+package app.noplayer;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class Othello {
+public class Othello{
 
     private Byte[][] initial_board;
     private Integer rows;
