@@ -2,6 +2,8 @@ package app.multiplayer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Random;
 
 /**
  * Class that will manage the logic of the boards, implements the interface
@@ -63,23 +65,50 @@ public class Board implements Comparable<Board>{
         Byte[][] matrix = board;
         int rows = this.board.length;
         int cols = this.board[0].length;
+        HashSet<Integer> looked_pos = new HashSet<>();
         // Iterate over the matrix to find what moves can do
         for( int i=0; i<rows; i++ ){
             for( int j=0; j<cols; j++ ){
                 /* 
                  * It consider a child like a space null but with a neighbor not null space 
                  * Exists 8 possible moves that can be done in a central position
-                 * maked the respective restrictions in the limits of the matrix
+                 * maked the respective restrictions in the limits of the matrix.
+                 * Looks too if the space is already been looked for, so the programm
+                 * dont repeat childs.
                  */
-                if( matrix[i][j] == null ) continue; 
-                if( i > 0 && j > 0 && matrix[i-1][j-1] == null )           childs.add( makeMove( this.copy(), i-1, j-1, turn ) );
-                if( i > 0 && j < cols-1 && matrix[i-1][j+1] == null )      childs.add( makeMove( this.copy(), i-1, j+1, turn ) );
-                if( i < rows-1 && j > 0 && matrix[i+1][j-1] == null )      childs.add( makeMove( this.copy(), i+1, j-1, turn ) );
-                if( i < rows-1 && j < cols-1 && matrix[i+1][j+1] == null ) childs.add( makeMove( this.copy(), i+1, j+1, turn ) );
-                if( i > 0 && matrix[i-1][j] == null )                      childs.add( makeMove( this.copy(), i-1, j, turn ) );
-                if( i < rows-1 && matrix[i+1][j] == null )                 childs.add( makeMove( this.copy(), i+1, j, turn ) );
-                if( j > 0 && matrix[i][j-1] == null )                      childs.add( makeMove( this.copy(), i, j-1, turn ) );
-                if( j < cols-1 && matrix[i][j+1] == null )                 childs.add( makeMove( this.copy(), i, j+1, turn ) );
+                if( matrix[i][j] == null ) continue;
+                if(!looked_pos.contains((i-1)*rows + (j-1))){
+                    if( i > 0 && j > 0 && matrix[i-1][j-1] == null )           childs.add( makeMove( this.copy(), i-1, j-1, turn ) );
+                    looked_pos.add((i-1)*rows + (j-1));
+                }
+                if(!looked_pos.contains((i-1)*rows + (j+1))){
+                    if( i > 0 && j < cols-1 && matrix[i-1][j+1] == null )      childs.add( makeMove( this.copy(), i-1, j+1, turn ) );
+                    looked_pos.add((i-1)*rows + (j+1));
+                }
+                if(!looked_pos.contains((i+1)*rows + (j-1))){
+                    if( i < rows-1 && j > 0 && matrix[i+1][j-1] == null )      childs.add( makeMove( this.copy(), i+1, j-1, turn ) );
+                    looked_pos.add((i+1)*rows + (j-1));
+                }
+                if(!looked_pos.contains((i+1)*rows + (j+1))){
+                    if( i < rows-1 && j < cols-1 && matrix[i+1][j+1] == null ) childs.add( makeMove( this.copy(), i+1, j+1, turn ) );
+                    looked_pos.add((i+1)*rows + (j+1));
+                }
+                if(!looked_pos.contains((i-1)*rows + (j))){
+                    if( i > 0 && matrix[i-1][j] == null )                      childs.add( makeMove( this.copy(), i-1, j, turn ) );
+                    looked_pos.add((i-1)*rows + (j));
+                }
+                if(!looked_pos.contains((i+1)*rows + (j))){
+                    if( i < rows-1 && matrix[i+1][j] == null )                 childs.add( makeMove( this.copy(), i+1, j, turn ) );
+                    looked_pos.add((i+1)*rows + (j));
+                }
+                if(!looked_pos.contains((i)*rows + (j-1))){
+                    if( j > 0 && matrix[i][j-1] == null )                      childs.add( makeMove( this.copy(), i, j-1, turn ) );
+                    looked_pos.add((i)*rows + (j-1));
+                }
+                if(!looked_pos.contains((i)*rows + (j+1))){
+                    if( j < cols-1 && matrix[i][j+1] == null )                 childs.add( makeMove( this.copy(), i, j+1, turn ) );
+                    looked_pos.add((i)*rows + (j+1));     
+                } 
             }
         }
         return childs;
@@ -190,6 +219,19 @@ public class Board implements Comparable<Board>{
     public Board copy(){
         return new Board(copyBoard(), priority, last_pos.clone());
     }
+
+    /**
+     * Clone last_pos array, in case its initiate it
+     * @return Return a new array of Byte of two positions
+     */
+    /* private Byte[] cloneLastPos(){
+        if(last_pos == null){
+            System.out.println("Is null");
+            Byte[] arr = {0,0};
+            return arr;
+        }
+        return last_pos.clone();
+    } */
 
     /**
      * Look if the board is complete, complete means that all the matrix is fill
@@ -328,7 +370,9 @@ public class Board implements Comparable<Board>{
      */
     @Override
     public int compareTo(Board o) {
-        return (o.priority >= this.priority) ? 1:-1;
+        if(o.priority > this.priority) return 1;
+        else if(o.priority < this.priority) return -1;
+        else return (int) (Math.random() * 1);
     }
 
 }

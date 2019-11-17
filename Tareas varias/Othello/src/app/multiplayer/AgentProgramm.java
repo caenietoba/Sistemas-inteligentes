@@ -10,7 +10,7 @@ public class AgentProgramm{
 
     // Will mantain the childs visited of the actual game play 
     // on the search and order them with the priority
-    private PriorityQueue<Board> p_queue = new PriorityQueue<>();
+    private PriorityQueue<Board> p_queue;
     // Mantain the othello game
     private Othello othello;
     // Obtain the heuristics of the othello game
@@ -34,6 +34,7 @@ public class AgentProgramm{
      * @return Return a board with the move done by the agent
      */
 	public Board play(Board board, Boolean player) {
+        //System.out.println(board.getMoves( player ).size());
 		return alphabeta(board.getMoves( player ));
     }
 
@@ -45,7 +46,7 @@ public class AgentProgramm{
      * @return Return a board with the move done by the agent 
      */
     public Board alphabeta( ArrayList<Board> childs_board ){
-        int depth = 5; // Max depth of the algorithm
+        int depth = 3; // Max depth of the algorithm
         int alpha = -1000000000; 
         int betha = 1000000000;
         Boolean maximizing_player = true; 
@@ -53,6 +54,7 @@ public class AgentProgramm{
         for (Board board : childs_board) {
             if( time_finished ) break; // Manage of the time, in case that the 10 seconds pass it return
             board.setPriority((byte)(int)alphabeta(board, depth, alpha, betha, maximizing_player));
+            //System.out.print(board.getPriority() + " ");
             p_queue.add(board);
         }
         return p_queue.peek();
@@ -73,7 +75,7 @@ public class AgentProgramm{
         ArrayList<Board> childs_board; // Childs of the actual board
         
         // If the depth has reduced to 0 or if the board is totally full then it returns
-        if( depth == 0 || board.isComplete() ) return heuristics.heuristicA( board.getBoard() );
+        if( depth == 0 || board.isComplete() ) return heuristic( board );
         // Depending on the maximizing player it will pass one or another to the next alphabeta
         if( maximizing_player ){ 
             value = -1000000000;
@@ -84,7 +86,7 @@ public class AgentProgramm{
                 alpha = Math.max( alpha, value );
                 if( alpha >= betha ) break;
                 // Manage of the time, in case that the 10 seconds pass it return
-                if(time_finished) return heuristics.heuristicA( board.getBoard() );
+                if(time_finished) return heuristic( board );
             }
             return value;
         } else {
@@ -96,10 +98,16 @@ public class AgentProgramm{
                 betha = Math.min( betha, value );
                 if( alpha >= betha ) break;
                 // Manage of the time, in case that the 10 seconds pass it return
-                if(time_finished) return heuristics.heuristicA( board.getBoard() ); // Manejo del tiempo
+                if(time_finished) return heuristic( board ); // Manejo del tiempo
+                //(int)heuristics.dynamic_heuristic_evaluation_function( board.getBoard() );
             }
             return value;
         }
+    }
+
+    private int heuristic(Board board){
+        //return heuristics.heuristicA( board.getBoard() );
+        return (int)heuristics.dynamic_heuristic_evaluation_function( board.getBoard(), othello.getPlayer() );
     }
 
     /**

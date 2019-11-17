@@ -12,7 +12,7 @@ public class Environment{
     private AgentProgramm ap; // The agent programm variable
     private Othello othello; // Mantain the othello game
     private Scanner sc;
-    private int max_time; // Variable that contains the max time to do a move
+    private int max_time = 9000; // Variable that contains the max time to do a move
 
     /**
      * Principal function, recover the data from the user and calls the 
@@ -61,9 +61,10 @@ public class Environment{
      * @param player Tokens that is using our agent, whites = 0 and blacks = 1
      */
     public void playPlayer(Boolean player){
-        Timer timer = new Timer(); // Variable to manage the time of the player to play
         Board board;
-        timer.schedule(new TimerTask(){
+
+        Timer timer = new Timer(); // Variable to manage the time of the player to play
+        TimerTask timer_task = new TimerTask(){
             /** 
              * TimerTask to manage the time, once it is trigger it will change the
              * variable time_finished in agent programm so the ap will return a new board
@@ -73,12 +74,19 @@ public class Environment{
                 ap.setTime_finished(true);
             }
     
-        }, max_time); // Has 9 seconds, not 10 because with 10 its already a lose
+        };
+        timer.schedule(timer_task, max_time); // Has 9 seconds, not 10 because with 10 its already a lose
+
         othello.setTurn(player); // Set the othello player as actual player
         board = ap.play(othello.getBoard(), player); // Makes the play of the agent
         othello.setBoard(board.copy()); // Change the actual board for the best board
 
         othello.setTurn(!player); // Change the player to the enemy
+
+        // Cancel the task
+        timer_task.cancel();
+        timer.cancel();
+        timer.purge();
 
         ap.setTime_finished(false); // Put again the time_finished var to false until next turn
 
