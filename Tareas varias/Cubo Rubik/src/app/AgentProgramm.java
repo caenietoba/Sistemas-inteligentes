@@ -1,230 +1,117 @@
 package app;
 
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
-import java.util.Stack;
 
-class AgentProgramm{
+import app.representations.array.Heuristics;
+import app.representations.Cube;
+import app.representations.array.ArrayCube;
+import app.representations.array.Moves;
+
+class AgentProgramm {
+
+    Cube<Byte[]> cube, aux_cube;
+    HashSet<Cube<Byte[]>> memory;
+    int num_moves, pos_moves, num_alg;
+
+    public AgentProgramm(int num_moves, int pos_moves, int num_alg) {
+        this.num_moves = num_moves;
+        this.pos_moves = pos_moves;
+        this.num_alg = num_alg;
+    }
+
+    protected void solveCube() {
+        memory = new HashSet<>();
+        cube = new ArrayCube(num_moves, pos_moves);
+
+        boolean solved = false;
+
+        if(num_alg == 0)      solved = breathSearch();
+        else if(num_alg == 1) solved = iterativeDeepeningSearch();
+        else if(num_alg == 2) solved = aStar(0);
+        else if(num_alg == 3) solved = aStar(1);
+        
+        if(!solved) System.out.print("not found");
+    }
+
+    private boolean breathSearch() {
+        Queue<Cube<Byte[]>> queue = new LinkedList<>();
+
+        queue.add(cube);
+        memory.add(cube);
+
+        while (!queue.isEmpty()) {
+            cube = queue.poll();
+            if(cube.isGoal()) return true;
+            for (int i = 0; i < pos_moves; i++) {
+                aux_cube = Moves.moves[i].move(cube);
+
+                if(memory.contains(aux_cube)) continue;
+
+                aux_cube.addMove((byte)i);
+                queue.offer(aux_cube);
+                memory.add(aux_cube);
+
+            }
+        }
+        return false;
+    }
+
+    private boolean iterativeDeepeningSearch(){
+        for (int depth = 0; depth < num_moves; depth++) {
+            //memory = new HashSet<>();
+            if(dls(cube, depth))
+                return true;
+        }
+        return false;
+    }
+
+    private boolean dls(Cube<Byte[]> node, int depth){
+        if(memory.contains(node)) return false;
+        //memory.add(node);
+        if(node.isGoal()) return true;
+        if(depth < 0) return false;
+        for (int i = 0; i < pos_moves; i++) {
+            aux_cube = Moves.moves[i].move(node);
+            aux_cube.addMove((byte)i);
+            if(dls(aux_cube, depth - 1)) 
+                return true;
+        }
+        return false;
+    }
+
+    private boolean aStar(int heuristic){
+        PriorityQueue<Cube<Byte[]>> queue = new PriorityQueue<>();
+
+        queue.add(cube);
+        memory.add(cube);
+
+        while (!queue.isEmpty()) {
+            cube = queue.poll();
+            if(cube.isGoal()) return true;
+            for (int i = 0; i < pos_moves; i++) {
+                aux_cube = Moves.moves[i].move(cube);
+
+                if(memory.contains(aux_cube)) continue;
+                
+                aux_cube.setPriority(findHeuristic(aux_cube, heuristic));
+                aux_cube.addMove((byte)i);
+
+                queue.offer(aux_cube);
+                memory.add(aux_cube);
+
+            }
+        }
+
+        return false;
+    }
+
+    private Byte findHeuristic(Cube<Byte[]> cube, int heuristic){
+        if(heuristic == 0)      return Heuristics.heuristic1(cube);
+        else if(heuristic == 1) return Heuristics.heuristic2(cube);
+        return 0;
+    }
     
-    private final Byte[][][] goal_cube = {
-        {
-            {0,0,0},
-            {0,null,0}, //Cara superior
-            {0,0,0}
-        },
-        {
-            {1,1,1},
-            {1,null,1}, //Cara de al frente
-            {1,1,1}
-        },
-        {
-            {2,2,2},
-            {2,null,2}, //Cara derecha
-            {2,2,2}
-        },
-        {
-            {3,3,3},
-            {3,null,3}, //Cara trasera
-            {3,3,3}
-        },
-        {
-            {4,4,4},
-            {4,null,4}, //Cara izquierda
-            {4,4,4}
-        },
-        {
-            {5,5,5},
-            {5,null,5}, //Cara inferior
-            {5,5,5}
-        }
-    };
-
-    private Heuristics heuristic = new Heuristics();
-    HashMap<List<List<List<Byte>>>,Boolean> map;
-
-    protected void doAction(){
-        Cube cube = new Cube( goal_cube );
-
-        cube.printCube();
-        cube.randomizeCube();
-        cube.printCube();
-
-        depthSearch(cube);
-        //cube.printCube();
-        System.out.println("Finished");
-        
-    }
-
-    private Cube breathSearch( Cube cube ){
-        Stack<Cube> queue = new Stack<>();
-        HashMap<Cube, Boolean> map2 = new HashMap<>();
-        
-        List<List<List<Byte>>> list_goal_cube = Cube.arrayToList( goal_cube );
-        map = new HashMap<>();
-        Cube[] childs;
-        
-        queue.add(cube);
-        map2.put( cube, true );
-
-        while( !queue.isEmpty() ){
-            cube = queue.pop();
-            if( cube.finished( list_goal_cube ) ) break;
-            childs = cube.getChilds();
-            for (Cube child : childs) {
-                if( map2.containsKey( child ) ) {
-                    System.out.println("entro");
-                    continue;
-                }
-                //child.setPriority( heuristic.heuristicA(cube, goal_cube) );
-                queue.add( child );
-                map2.put( child, true );
-            }
-        }
-        cube.printCube();
-        return cube;
-    }
-
-    private void depthSearch( Cube cube ){
-        Queue<Cube> queue = new LinkedList<>();
-        map = new HashMap<>();
-        HashMap<Cube, Boolean> map2 = new HashMap<>();
-        List<List<List<Byte>>> list_goal_cube = Cube.arrayToList( goal_cube );
-        Cube[] childs;
-        
-        queue.add(cube);
-        map2.put( cube, null );
-
-        while( !queue.isEmpty() ){
-            cube = queue.poll();
-            if( cube.finished( list_goal_cube ) ) break;
-            childs = cube.getChilds();
-            for (Cube child : cube.getChilds()) {
-                if( map2.containsKey( child ) ) continue;
-                //child.setPriority( heuristic.heuristicA(cube, goal_cube) );
-                queue.add( child );
-                map2.put( child, null );
-            }
-        }
-        cube.printCube();
-    }
-
-    /* private void aStarSearch( Cube cube ){
-        PriorityQueue<Cube> queue =  new PriorityQueue<>();
-        map = new HashMap<>();
-        HashMap<Cube, Boolean> map2 = new HashMap<>();
-        List<List<List<Byte>>> list_goal_cube = Cube.arrayToList( goal_cube );
-        Cube[] childs;
-        
-        cube.setPriority( heuristic.heuristicA(cube, goal_cube) );
-        queue.add(cube);
-        map2.put( cube, null );
-
-        while( !queue.isEmpty() ){
-            cube = queue.poll();
-            // System.out.println(cube);
-            if( cube.finished( list_goal_cube ) ) break;
-            childs = cube.getChilds();
-            for (Cube child : childs) {
-                child.setPriority( heuristic.heuristicA(child, goal_cube) );
-                if( map2.containsKey( child ) ) {
-                    System.out.println("entro");
-                    continue;
-                }
-                queue.add( child );
-                map2.put( child, null );
-            }
-        }
-        cube.printCube();
-    } */
-
-    /* protected void doAction(){
-        Cube cube = new Cube( goal_cube );
-
-        cube.printCube();
-        cube.randomizeCube();
-        cube.printCube();
-
-        breathSearch(cube);
-        cube.printCube(goal_cube);
-        cube.printCube();
-        System.out.println("Finished");
-        
-    }
-
-    private Cube breathSearch( Cube cube ){
-        Stack<Cube> queue = new Stack<>();
-        HashMap<Cube, Boolean> map2 = new HashMap<>();
-        map = new HashMap<>();
-        List<List<List<Byte>>> list = cube.getListCube();
-        Cube[] childs;
-        
-        queue.add(cube);
-        map.put( list, null );
-
-        while( !queue.isEmpty() ){
-            cube = queue.pop();
-            if( cube.finished( goal_cube ) ) break;
-            childs = cube.getChilds();
-            for (Cube child : childs) {
-                list = child.getListCube();
-                if( map.containsKey( list ) ) continue;
-                //child.setPriority( heuristic.heuristicA(cube, goal_cube) );
-                queue.add( child );
-                map.put( list, true );
-            }
-        }
-        cube.printCube();
-        return cube;
-    }
-
-    private void depthSearch( Cube cube ){
-        Queue<Cube> queue = new LinkedList<>();
-        map = new HashMap<>();
-        List<List<List<Byte>>> list = cube.getListCube();
-        Cube[] childs;
-        
-        queue.add(cube);
-        map.put( list, null );
-
-        while( !queue.isEmpty() ){
-            cube = queue.poll();
-            if( cube.finished( goal_cube ) ) break;
-            childs = cube.getChilds();
-            for (Cube child : childs) {
-                list = child.getListCube();
-                if( map.containsKey( list ) ) continue;
-                //child.setPriority( heuristic.heuristicA(cube, goal_cube) );
-                queue.add( child );
-                map.put( list, true );
-            }
-        }
-    }
-
-    private void aStarSearch( Cube cube ){
-        PriorityQueue<Cube> queue =  new PriorityQueue<>();
-        map = new HashMap<>();
-        List<List<List<Byte>>> list = cube.getListCube();
-        Cube[] childs;
-        
-        queue.add(cube);
-        map.put( list, null );
-
-        while( !queue.isEmpty() ){
-            cube = queue.poll();
-            if( cube.finished( goal_cube ) ) break;
-            childs = cube.getChilds();
-            for (Cube child : childs) {
-                list = child.getListCube();
-                if( map.containsKey( list ) ) continue;
-                child.setPriority( heuristic.heuristicA(cube, goal_cube) );
-                queue.add( child );
-                map.put( list, true );
-            }
-        }
-        cube.printCube();
-    } */
-
 }

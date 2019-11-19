@@ -166,7 +166,8 @@ public class Moves {
     };
 
     private final static void rotateMatrix(Cube<Byte[]> aux, Cube<Byte[]> cube, String direction, int face) {
-        try {
+        
+        /* try {
             if (direction.equals("left") && direction.equals("rigth")) 
                 throw new Exception("Direction must be \"left\" or \"rigth\"");
             if (face < 0 || face > 6) throw new Exception("Direction must be between 0 and 6");
@@ -187,12 +188,16 @@ public class Moves {
 
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        } */
     }
 
     @SuppressWarnings("unchecked")
     public static Movement<Cube<Byte[]>>[] moves = new Movement[]{
         up1, up2, rigth1, rigth2, rigthTurn1, rigthTurn2, down1, down2, left1, left2, leftTurn1, leftTurn2
+    };
+
+    public static String[] moves_names = new String[]{
+        "up1", "up2", "rigth1", "rigth2", "rigthTurn1", "rigthTurn2", "down1", "down2", "left1", "left2", "leftTurn1", "leftTurn2"
     };
 
 }
