@@ -5,6 +5,8 @@ public interface Cube<T> extends Comparable<Cube<T>>{
 
     Boolean isGoal();
 
+    void printSolution();
+
     void printCube();
 
     T getCube();

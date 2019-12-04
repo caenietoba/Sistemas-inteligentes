@@ -1,7 +1,5 @@
 package app;
 
-import java.util.Objects;
-
 public class MsPacman {
     private int pos_x;
     private int pos_y;
@@ -27,28 +25,8 @@ public class MsPacman {
         this.pos_y = pos_y;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (o == this)
-            return true;
-        if (!(o instanceof MsPacman)) {
-            return false;
-        }
-        MsPacman msPacman = (MsPacman) o;
-        return pos_x == msPacman.pos_x && pos_y == msPacman.pos_y;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(pos_x, pos_y);
-    }
-
-    @Override
-    public String toString() {
-        return "{" +
-            " pos_x='" + getPos_x() + "'" +
-            ", pos_y='" + getPos_y() + "'" +
-            "}";
+    public MsPacman clone(){
+        return new MsPacman(pos_x, pos_y);
     }
 
 }

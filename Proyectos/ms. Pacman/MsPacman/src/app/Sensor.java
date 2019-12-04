@@ -14,97 +14,64 @@ import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfByte;
-import org.opencv.imgcodecs.Imgcodecs;
-
+import java.awt.*;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import javax.swing.*;
+import java.awt.event.*;
 
-import javafx.scene.image.ImageView;
-import javafx.fxml.Initializable;
-import javafx.fxml.FXML;
-import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
-
-public class Sensor extends Application implements Initializable {
-
-    @FXML
-    private ImageView display;
+public class Sensor{
 
     private BufferedImage image;
-    private Mat mat_image;
+    private static BufferedImage _image;
 
     public void main(String[] args) throws Exception {
-		launch(args);
-	}
+        //launch(args);
+        Ui ui = new Ui();
+        ui.setBounds(100,150,100,90);
+        ui.setVisible(true);
+        ui.setResizable(false);
+    }
+    
+    private class Ui extends JFrame implements ActionListener{
+        
+        private static final long serialVersionUID = 1L;
 
-    @FXML
-    private void doTakeScreenShot(){
+        private JButton button;
+
+        public Ui(){
+            setLayout(null);
+            button = new JButton("Captura");
+            button.setBounds(45, 0, 100, 50);
+            button.addActionListener(this);
+            add(button);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (e.getSource() == button) {
+                Sensor.capturarPantalla();
+            }
+        }
+    }
+
+    public static void capturarPantalla(){
         try {
-            //display = new ImageView();
             Robot robot = new Robot();
             Rectangle rectangle = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
-            this.image = robot.createScreenCapture(rectangle);
-            //this.mat_image = bufferedImageToMat(this.image);
-            //Image my_image = SwingFXUtils.toFXImage(image, null);
+            BufferedImage image = robot.createScreenCapture(rectangle);
             ImageIO.write(image, "jpg", new File("out.jpg"));
-            //display.setImage(my_image);
+            Sensor._image = image;
         } catch (Exception e) {
             Logger.getLogger(Sensor.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 
-    @Override
-	public void start(Stage primaryStage) throws Exception {
-		primaryStage.setTitle("asd");
-		Button button = new Button();
-		button.setText("click");
-		button.setOnAction(new EventHandler<ActionEvent>() {
-			@Override public void handle(ActionEvent e) {
-				//System.out.println("Click");
-				doTakeScreenShot();
-				primaryStage.close();
-			}
-		});
-
-		StackPane layout = new StackPane();
-		layout.getChildren().add(button);
-
-		Scene scene = new Scene(layout,50,50);
-		primaryStage.setScene(scene);
-		primaryStage.show();
-
-	}
-
-	@Override
-	public void initialize(URL arg0, ResourceBundle arg1) {}
-    
-    public Mat BufferedImage2Mat(BufferedImage image) throws IOException {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        ImageIO.write(image, "jpg", byteArrayOutputStream);
-        byteArrayOutputStream.flush();
-        return Imgcodecs.imdecode(new MatOfByte(byteArrayOutputStream.toByteArray()), Imgcodecs.IMREAD_COLOR );
-    }
-
-    public static Mat bufferedImageToMat(BufferedImage bi) {
-        Mat mat = new Mat(bi.getHeight(), bi.getWidth(), CvType.CV_8UC3);
-        byte[] data = ((DataBufferByte) bi.getRaster().getDataBuffer()).getData();
-        mat.put(0, 0, data);
-        return mat;
-      }
-
     public BufferedImage getImage(){
         return this.image;
     }
 
-    public Mat getMatImage(){
-        return this.mat_image;
+    public void setImage(BufferedImage image){
+        this.image = image;
     }
 }

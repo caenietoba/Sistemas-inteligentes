@@ -1,12 +1,8 @@
 package app;
 
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Scalar;
-import org.opencv.core.Core.MinMaxLocResult;
-import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.imgproc.Imgproc;
+import java.awt.Robot;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 
 public class Environment {
 
@@ -15,8 +11,12 @@ public class Environment {
         Sensor sensor = new Sensor();
         sensor.main(args);
 
-        findMsPacman(sensor.getMatImage());
+        findMsPacman(sensor.getImage());
 
+    }
+
+    private void findMsPacman(BufferedImage image){
+        
     }
 
     private void findMsPacman( Mat image ){

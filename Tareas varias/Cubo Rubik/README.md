@@ -1,0 +1,1 @@
+Implementación de un Cubo Rubik usando algoritmos de busqueda como DFS, IDDFS, BFS y A* para solucionarlo.

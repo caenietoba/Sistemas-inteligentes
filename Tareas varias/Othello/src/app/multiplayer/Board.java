@@ -3,7 +3,6 @@ package app.multiplayer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Random;
 
 /**
  * Class that will manage the logic of the boards, implements the interface

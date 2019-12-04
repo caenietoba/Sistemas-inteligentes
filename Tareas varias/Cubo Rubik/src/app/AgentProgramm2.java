@@ -1,5 +1,6 @@
 package app;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
@@ -12,16 +13,40 @@ import app.representations.array.ArrayCube;
 import app.representations.array.Moves;
 
 /**
- * En esta clase se expande el arbol guardando los objetos de tipo Cube
+ * En esta clase se expande el arbol guardando los movimientos realizados hasta
+ * llegar a ese estado y implementando los movimientos en orden.
+ * En teoría esta forma debería ocupar menos memoría que la otra usando más
+ * procesamiento, la dificultad de esta implementación esta en como guardar los 
+ * visitados, para esta se implemento guardando el objeto Cube pero se debe 
+ * buscar una forma más eficiente de guardar el estado en memoría.
  */
-class AgentProgramm {
+class AgentProgramm2 {
 
     Cube<Byte[]> cube, aux_cube;
     HashSet<Cube<Byte[]>> memory;
     int num_moves, pos_moves, num_alg;
+    ArrayList<Byte> moves, aux_moves;
     int used_memory_visited = 0, used_memory_queue = 0, used_process = 0;
 
-    public AgentProgramm(int num_moves, int pos_moves, int num_alg) {
+    private class ExpandMoves implements Comparable<ExpandMoves>{
+        ArrayList<Byte> moves;
+        Byte priority;
+
+        public ExpandMoves(ArrayList<Byte> moves, Byte priority){
+            this.moves = moves;
+            this.priority = priority;
+        }
+
+        @Override
+        public int compareTo(ExpandMoves o) {
+        if (o.priority > this.priority)
+            return 1;
+        else
+            return 0;
+        }
+    }
+
+    public AgentProgramm2(int num_moves, int pos_moves, int num_alg) {
         this.num_moves = num_moves;
         this.pos_moves = pos_moves;
         this.num_alg = num_alg;
@@ -50,25 +75,29 @@ class AgentProgramm {
     }
 
     private boolean breathSearch() {
-        Queue<Cube<Byte[]>> queue = new LinkedList<>();
+        Queue<ArrayList<Byte>> queue = new LinkedList<>();
 
-        queue.add(cube); // Agrega el nodo inicial
-        memory.add(cube); // Agrega el nodo inicial
+        queue.add(new ArrayList<Byte>());
+        memory.add(cube);
 
-        while (!queue.isEmpty()) { // Revisa que se hayan expandido más nodos
-            cube = queue.poll(); // Saca el siguiente nodoa  visitar
-            if(cube.isGoal()) return true;
-            for (int i = 0; i < pos_moves; i++) { // Revisa los hijos
-                aux_cube = Moves.moves[i].move(cube); // Genera cada hijo
-                aux_cube.addMove((byte)i); // Agrega el movimiento hecho al hijo
-
-                if(memory.contains(aux_cube)) continue; // Mira si el hijo ya ha sido expandido
-
-                queue.offer(aux_cube); // Agrega el nodo 
-                memory.add(aux_cube); // Agrega el nodo 
-
+        while (!queue.isEmpty()) {
+            moves = queue.poll();
+            if(ArrayCube.implementMoves(cube, moves).isGoal()) {
+                for (Byte move : moves) System.out.print(Moves.moves_names[move] + ", ");
+                return true;
             }
-            // Actualiza los indicadores de rendimiento
+            for (int i = 0; i < pos_moves; i++) {
+                aux_moves = copyMoves(moves);
+                aux_moves.add((byte) i);
+
+                aux_cube = ArrayCube.implementMoves(cube, aux_moves);
+
+                if(memory.contains(aux_cube)) continue;
+
+                queue.offer(aux_moves);
+                memory.add(aux_cube);
+            }
+
             lookUsedMemory(memory.size(), queue.size());
             lookUsedProcess();
         }
@@ -102,53 +131,55 @@ class AgentProgramm {
     }
 
     private boolean iterativeDeepeningSearch(){
-        // Bucle que recorrera cada nivel del arbol
-        for (int depth = 0; depth < num_moves; depth++) { 
-            if(dls(cube, depth)) // función dfs recursiva
+        for (int depth = 0; depth < num_moves; depth++) {
+            if(dls(cube, depth, new ArrayList<>()))
                 return true;
         }
         return false;
     }
 
-    private boolean dls(Cube<Byte[]> node, int depth){
-        //if(memory.contains(node)) return false;
-        lookUsedProcess(); // Actualiza los indicadores
-        if(node.isGoal()) return true;
-        // En caso de que se haya llegado al nivel límite
-        if(depth < 0) return false; 
-        // Revisa los hijos
+    private boolean dls(Cube<Byte[]> node, int depth, ArrayList<Byte> moves){
+        if(memory.contains(node)) return false;
+        if(ArrayCube.implementMoves(cube, moves).isGoal()) {
+            for (Byte move : moves) System.out.print(Moves.moves_names[move] + ", ");
+            return true;
+        }
+        if(depth < 0) return false;
         for (int i = 0; i < pos_moves; i++) {
-            // Genera cada hijo
-            aux_cube = Moves.moves[i].move(node);
-            aux_cube.addMove((byte)i);
-            if(dls(aux_cube, depth - 1)) 
+            aux_moves = copyMoves(moves);
+            aux_moves.add((byte) i);
+            if(dls(node, depth - 1, aux_moves)) 
                 return true;
         }
         return false;
     }
 
     private boolean aStar(int heuristic){
-        PriorityQueue<Cube<Byte[]>> queue = new PriorityQueue<>();
+        PriorityQueue<ExpandMoves> queue = new PriorityQueue<>();
+        ExpandMoves em;
 
-        queue.add(cube); // Agrega el nodo inicial
-        memory.add(cube); // Agrega el nodo inicial
+        queue.add(new ExpandMoves(new ArrayList<>(), (byte) 0));
+        memory.add(cube);
 
-        while (!queue.isEmpty()) { // Revisa que se hayan expandido más nodos
-            cube = queue.poll(); // Saca el siguiente nodoa  visitar
-            if(cube.isGoal()) return true;
-            for (int i = 0; i < pos_moves; i++) { // Revisa los hijos
-                aux_cube = Moves.moves[i].move(cube); // Genera cada hijo
-                aux_cube.addMove((byte)i); // Agrega el movimiento hecho al hijo
-
-                // Mira si el hijo ya ha sido expandido
-                if(memory.contains(aux_cube)) continue;
-                // Encuentra la prioridad de dicho nodo con una de las heuristicas
-                aux_cube.setPriority(findHeuristic(aux_cube, heuristic));
-
-                queue.offer(aux_cube); // Agrega el nodo 
-                memory.add(aux_cube); // Agrega el nodo 
+        while (!queue.isEmpty()) {
+            em = queue.poll();
+            if(ArrayCube.implementMoves(cube, em.moves).isGoal()) {
+                for (Byte move : em.moves) System.out.print(Moves.moves_names[move] + ", ");
+                return true;
             }
-            // Actualiza los indicadores de rendimiento
+            for (int i = 0; i < pos_moves; i++) {
+                aux_moves = copyMoves(em.moves);
+                aux_moves.add((byte) i);
+
+                aux_cube = ArrayCube.implementMoves(cube, aux_moves);
+
+                if(memory.contains(aux_cube)) continue;
+
+                queue.offer(new ExpandMoves(aux_moves, findHeuristic(aux_cube, heuristic)));
+                memory.add(aux_cube);
+
+            }
+
             lookUsedMemory(memory.size(), queue.size());
             lookUsedProcess();
         }
@@ -161,6 +192,12 @@ class AgentProgramm {
         else if(heuristic == 1) return Heuristics.heuristic2(cube);
         else if(heuristic == 2) return Heuristics.heuristic(cube);
         else return 0;
+    }
+
+    private ArrayList<Byte> copyMoves(ArrayList<Byte> moves){
+        ArrayList<Byte> aux = new ArrayList<Byte>();
+        for(Byte i: moves) aux.add(i);
+        return aux;
     }
 
     private void lookUsedMemory(int memory_visited, int memory_queue){
