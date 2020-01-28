@@ -27,7 +27,7 @@ public class Heuristic{
             j_i = y-i-x; 
             j_f = y+i-x;
         }
-        if(op == 'u'){
+        if(op == 'l'){
             i_i = x-j; 
             i_f = x+j; 
             j_i = 0; 
@@ -42,9 +42,7 @@ public class Heuristic{
 
         for (i = i_i; i < i_f; i++) 
             for (j = j_i; j < j_f; j++) 
-                if(byte_board.get(i).get(j) == BoardMarks.WALL) continue;
-                else if(byte_board.get(i).get(j) == BoardMarks.VISITED) continue;
-                else priority = priority - 1.0;
+                if(byte_board.get(i).get(j) == BoardMarks.NOT_VISITED) priority = priority - 1.0;
 
         return priority;
     }

@@ -27,8 +27,10 @@ public class AgentProgramm {
 
             board = queue.poll();
             board.printBoard();
+            //System.out.println(board.getLastMovement());
             queue.clear();
         }
+        System.out.println("Completado");
 
     }
 

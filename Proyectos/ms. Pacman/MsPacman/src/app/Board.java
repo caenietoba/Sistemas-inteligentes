@@ -6,10 +6,10 @@ import java.util.List;
 public class Board implements Comparable<Board>{
 
     public static class BoardMarks{
-        public static final Byte VISITED = '1';
-        public static final Byte NOT_VISITED = '0';
-        public static final Byte MS_PACMAN = '2';
-        public static final Byte WALL = '3';
+        public static final Byte VISITED = 1;
+        public static final Byte NOT_VISITED = 0;
+        public static final Byte MS_PACMAN = 2;
+        public static final Byte WALL = 3;
     }
 
     private List<List<Byte>> board;
@@ -23,14 +23,15 @@ public class Board implements Comparable<Board>{
         findData();
     }
 
-    public Board(List<List<Byte>> board, MsPacman ms_pacman, int num_not_visited){
+    public Board(List<List<Byte>> board, MsPacman ms_pacman, int num_not_visited, Character last_movement){
         this.board = board;
         this.ms_pacman = ms_pacman;
         this.num_not_visited = num_not_visited;
+        this.last_movement = last_movement;
     }
 
     public Board clone(){
-        return new Board(copyBoard(), ms_pacman.clone(), num_not_visited);
+        return new Board(copyBoard(), ms_pacman.clone(), num_not_visited, last_movement);
     }
 
     public void findData(){
@@ -47,6 +48,7 @@ public class Board implements Comparable<Board>{
 
         this.num_not_visited = num_not_visited;
         this.ms_pacman = new MsPacman(pos_x, pos_y);
+        System.out.println(this.num_not_visited);
     }
 
     private List<List<Byte>> arrayToList(Byte[][] board){

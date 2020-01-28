@@ -1,17 +1,20 @@
 package app;
 
-import java.awt.Robot;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
 
 public class Environment {
 
     public void run(String[] args) throws Exception {
 
         Sensor sensor = new Sensor();
-        sensor.main(args);
+        //sensor.main(args);
 
-        findMsPacman(sensor.getImage());
+        /* Util.findFirstPixel(sensor.getImage()); */
+
+        //findMsPacman(sensor.getImage());
+
+        AgentProgramm ap = new AgentProgramm(BoardsDummy.map3);
+        ap.aStar();
 
     }
 
@@ -19,7 +22,7 @@ public class Environment {
         
     }
 
-    private void findMsPacman( Mat image ){
+    /* private void findMsPacman( Mat image ){
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         Mat source = image;
         Mat template = null;
@@ -42,6 +45,6 @@ public class Environment {
  
         Imgcodecs.imwrite(filePath+"sonuc.jpg", source);
         System.out.println("Complated.");
-    }
+    } */
 
 }
