@@ -79,7 +79,7 @@ public class Board implements Comparable<Board>{
 
     public void printBoard(){
         System.out.println();
-        System.out.println("The movement was: " + last_movement);
+        //System.out.println("The movement was: " + last_movement);
         for (List<Byte> list : board) {
             System.out.print("|");
             for (Byte value : list) {
@@ -92,9 +92,10 @@ public class Board implements Comparable<Board>{
 
     @Override
     public int compareTo(Board o) {
-        if(this.getPriority() > o.getPriority())      return 1;
+        /* if(this.getPriority() > o.getPriority())      return 1;
         else if(this.getPriority() < o.getPriority()) return -1;
-        else return 0;
+        else return (int) (Math.random() * 99) < 50 ? -1 : 1; */
+        return Double.compare(this.getPriority(), o.getPriority());
     }
 
     public List<List<Byte>> getBoard(){

@@ -21,13 +21,13 @@ public class AgentProgramm {
                 if(aux_board == null) continue;
 
                 aux_board.setPriority(Heuristic.heuristicA(aux_board));
-
+                aux_board.printBoard();
                 queue.offer(aux_board);
             }
 
             board = queue.poll();
-            board.printBoard();
-            //System.out.println(board.getLastMovement());
+            //board.printBoard();
+            System.out.println(board.getLastMovement());
             queue.clear();
         }
         System.out.println("Completado");
