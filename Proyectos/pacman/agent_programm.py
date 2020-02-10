@@ -3,7 +3,7 @@ from board import Board
 from moves import moves
 from heuristic import Heuristic
 
-from Queue import PriorityQueue
+from queue import PriorityQueue
 import copy
 
 class AgentProgramm:

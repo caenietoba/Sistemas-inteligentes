@@ -8,5 +8,5 @@ def run_no_recognition(board):
 
 def run_recognition(file):
     board = get_board(file)
-    agent = AgentProgramm(board)
-    agent.a_star()
+    #agent = AgentProgramm(board)
+    #agent.a_star()
